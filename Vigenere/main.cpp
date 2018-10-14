@@ -18,6 +18,7 @@
 
 using namespace std;
 
+
 int const MAX_CHAR_VAL = 26;
 
 int value(char c){
@@ -28,7 +29,7 @@ char symbol(int n){
     return n | 96;
 }
 
-char get_symbol(int i,int n){
+char get_code(int i,int n){
     int result = i + n;
     if(result > MAX_CHAR_VAL){
         result = result - MAX_CHAR_VAL;
@@ -36,9 +37,16 @@ char get_symbol(int i,int n){
     return symbol(result);
 }
 
-void encrypt(string text, string password, string &code){
-//    char result[text.size() + 1]; 
-    
+char get_text(int i, int n){
+    int result = i - n;
+    if(result <= 0){
+        result = result + MAX_CHAR_VAL;
+    }
+    return symbol(result);
+}
+
+void enc_dec_vigenere(string text, string password, string &code, char (*operation)(int,int)){
+//    char result[text.size() + 1];  
     int text_index = 0;
     int pass_index = 0;
     while (text_index < text.size()){
@@ -51,7 +59,7 @@ void encrypt(string text, string password, string &code){
         else{
             int num_char = value(text[text_index]); 
             int shift_index = value(password[pass_index]) - 1;
-            char new_letter = get_symbol(num_char, shift_index);
+            char new_letter = operation(num_char, shift_index);
             
             code += new_letter;
             
@@ -63,26 +71,31 @@ void encrypt(string text, string password, string &code){
     }
 }
 
-    /*
- * 
- */
+void encrypt(string text, string password, string &code){
+    enc_dec_vigenere(text,password,code,get_code);
+}
+
+void decrypt(string code, string password, string &text){
+    enc_dec_vigenere(code, password, text, get_text);
+}
+
 int main(int argc, char** argv) {
 
     int t = 'b' & 31;
     
-    string text = "vigenere quadrat";
-    string password = "passwort";
+    string text = "hallo my name is chen and i am writing a code that is capable to encrypt and decrypt text using the vinigerete quadrat or shift key method";
+    string password = "PASSWORT";
     string result;
-//    cout << "Please input a text to be encrypted:" << endl;    
-//    getline(cin,text);
-//    
-//    cout << "Please input a password to encrypt the text with" << endl;
-//    cin >> password;
     
     encrypt(text, password, result);
     cout << result << endl;
-//    
-//    cout << 6 % 4 << endl;
+
+    text = "waddk ap gpmw ao qyxc afv e od pgilaju r vddw ldok bh cshwpcx io wfyfpii afv zstknpl lalk nhify pvv oxnayafvmt qmszfrm dr kzetk dty ewpvfw";
+    password = "PASSWORT";
+    string result2;
+    decrypt(text,password,result2);
+    
+    cout << result2 << endl;    
     return 0;
 }
 
