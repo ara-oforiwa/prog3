@@ -29,16 +29,16 @@ char symbol(int n){
     return n | 96;
 }
 
-char get_code(int i,int n){
-    int result = i + n;
+char shift_backwards(int n_char,int shift_index) {
+    int result = n_char + shift_index;
     if(result > MAX_CHAR_VAL){
         result = result - MAX_CHAR_VAL;
     }
     return symbol(result);
 }
 
-char get_text(int i, int n){
-    int result = i - n;
+char shift_forward(int n_char,int shift_index){
+    int result = n_char - shift_index;
     if(result <= 0){
         result = result + MAX_CHAR_VAL;
     }
@@ -72,11 +72,11 @@ void enc_dec_vigenere(string text, string password, string &code, char (*operati
 }
 
 void encrypt(string text, string password, string &code){
-    enc_dec_vigenere(text,password,code,get_code);
+    enc_dec_vigenere(text,password,code,shift_forward);
 }
 
 void decrypt(string code, string password, string &text){
-    enc_dec_vigenere(code, password, text, get_text);
+    enc_dec_vigenere(code, password, text, shift_backwards);
 }
 
 int main(int argc, char** argv) {
