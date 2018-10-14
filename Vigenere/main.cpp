@@ -18,6 +18,8 @@
 
 using namespace std;
 
+int const MAX_CHAR_VAL = 26;
+
 int value(char c){
     return c & 31;
 }
@@ -26,38 +28,42 @@ char symbol(int n){
     return n | 96;
 }
 
-string encrypt(string text, string password){
+char get_symbol(int i,int n){
+    int result = i + n;
+    if(result > MAX_CHAR_VAL){
+        result = result - MAX_CHAR_VAL;
+    }
+    return symbol(result);
+}
+
+void encrypt(string text, string password, string &code){
 //    char result[text.size() + 1]; 
-    string result;
     
     int text_index = 0;
-    for(; text_index < text.size(); text_index++){
-        int pass_index;
-//        cout << "(" << text[text_index] << "," << password[pass_index] << "}" << endl; 
+    int pass_index = 0;
+    while (text_index < text.size()){
+        // Spaces are not encrypted, text index is incremented but not
+        // the password index, to keep pass aligned with text.
         if(text[text_index] == ' '){
-            result[text_index] = ' ';
+            code  += ' ';
+            text_index++;
         }
         else{
-            pass_index  = text_index % password.size();
-            int n_char = value(text[text_index]); 
-            int n_pass = value(password[pass_index]);
-            int n_code;
-            if((n_char + n_pass) > 26){
-                n_code = ((n_char + n_pass) % 26) - 1;
-            }else{
-                n_code = n_char + n_pass - 1;
-            }
-            cout << text[text_index] << "(" << n_char << ")| " 
-                    << password[pass_index] << "(" << n_pass << ")" << "=>" 
-                    << symbol(n_code) << endl;
-//            result[text_index] = symbol(n_code);
+            int num_char = value(text[text_index]); 
+            int shift_index = value(password[pass_index]) - 1;
+            char new_letter = get_symbol(num_char, shift_index);
+            
+            code += new_letter;
+            
+            text_index++;
+            
+            // Cyclicly increment the password index
+            pass_index = (pass_index + 1) % password.size();
         }
     }
-//    result[text_index] = '\0';
-//    cout << result << endl;
-    return result;
 }
-/*
+
+    /*
  * 
  */
 int main(int argc, char** argv) {
@@ -65,15 +71,15 @@ int main(int argc, char** argv) {
     int t = 'b' & 31;
     
     string text = "vigenere quadrat";
-    string password = "password";
-    
+    string password = "passwort";
+    string result;
 //    cout << "Please input a text to be encrypted:" << endl;    
 //    getline(cin,text);
 //    
 //    cout << "Please input a password to encrypt the text with" << endl;
 //    cin >> password;
     
-    string result = encrypt(text, password);
+    encrypt(text, password, result);
     cout << result << endl;
 //    
 //    cout << 6 % 4 << endl;
