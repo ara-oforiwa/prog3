@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/**@file  main.cpp
  * File:   main.cpp
  * Author: Chen
  *
@@ -14,102 +14,44 @@
 #include <iostream>
 #include <string>
 
+#include "main.h"
+
 using namespace std;
 
-// The number of letter in the used alphabet
+// The number of letters in the used alphabet
 int const MAX_CHAR_VAL = 26;
 
-// Forward declarations
-int value(char c);
-char symbol(int n);
-char shift_backwards(int n_char,int shift_index);
-char shift_forward(int n_char,int shift_index);
-void enc_dec_vigenere(string text, string password, string &code, char (*operation)(int,int));
-void encrypt(string text, string password, string &code);
-void decrypt(string code, string password, string &text);
-// Forward declarations
-
-/*
+/**
  * This program encrypts and decrypts text using the Vigenere algorithm.
  */
-int main(int argc, char** argv) {
+int main() {
 
-    string text = "hallo my name is chen and i am writing a code that is capable to encrypt and decrypt text using the vinigerete quadrat or shift key method";
-    string password = "PASSWORT";
-    string result;
-    
-    encrypt(text, password, result);
-    cout << result << endl;
+    string clear_text = "hallo my name is chen and i am writing a code that is capable of encrypting and decrypting text using the vinigere quadrat method in an overly complicated manner";
+    string password = "HOCHSCHULE";
 
-    text = "waddk ap gpmw ao qyxc afv e od pgilaju r vddw ldok bh cshwpcx io wfyfpii afv zstknpl lalk nhify pvv oxnayafvmt qmszfrm dr kzetk dty ewpvfw";
-    password = "PASSWORT";
-    string result2;
-    decrypt(text,password,result2);
+    string encrypted_text;
+    encrypt(clear_text, password, encrypted_text);
+    cout << "The encrypted text is:\n" << encrypted_text << endl;
     
-    cout << result2 << endl;    
+    string decrypted_text;
+    decrypt(encrypted_text,password,decrypted_text);  
+    cout << "The decrypted text is:\n" << decrypted_text << endl;    
+    
+    cout << "Press any key to continue..." << endl;
+    cin.sync();
+    cin.get();
+    
     return 0;
 }
 
-/*
- * Masks in the least significant 5 bits of an ASCII character numeric value.
- * A number representing a letter between a and z (1-26 respectively) is returned. 
- */
-int value(char c){
-    return c & 31;
-}
-
-/*
- * Takes an index of a letter a to z (1-26) and completes the required most 
- * significant bits of its ASCII representation, the respective char is returned.
- */
-char symbol(int n){
-    return n | 96;
-}
-
-/*
- * Calculates the character that is achieved by shifting backwards as used in
- * the Vigenere decryption process. Shifting is cyclic.
- */
-char shift_forward(int n_char,int shift_index) {
-    int result = n_char + shift_index;
-    if(result > MAX_CHAR_VAL){
-        result = result - MAX_CHAR_VAL;
-    }
-    return symbol(result);
-}
-
-/*
- * Calculates the character that is achieved by shifting forward as used in
- * the Vigenere encryption process. Shifting is cyclic.
- */
-char shift_backwards(int n_char,int shift_index){
-    int result = n_char - shift_index;
-    if(result <= 0){
-        result = result + MAX_CHAR_VAL;
-    }
-    return symbol(result);
-}
-
-/*
- * An interface to the encryption process, calls the generic function with the
- * required operation
- */
-void encrypt(string text, string password, string &code){
-    enc_dec_vigenere(text,password,code,shift_forward);
-}
-
-/*
- * An interface to the decryption process, calls the generic function with the
- * required operation
- */
-void decrypt(string code, string password, string &text){
-    enc_dec_vigenere(code, password, text, shift_backwards);
-}
-
-/*
+/**
  * A generic function for the encryption or decryption, it takes the text 
  * (either original or encrypted), the password, an output string and a pointer 
  * to the function that performs the required operation; encryption or decryption.
+ * @param text the text to encrypt/decrypt 
+ * @param password A password to be used for encryption/decryption
+ * @param code An output variable that returns the encrypted or decrypted text.
+ * @param operation A pointer to the function performing the required operation.
  */
 void enc_dec_vigenere(string text, string password, string &code, char (*operation)(int,int)){
     int text_index = 0;
@@ -145,3 +87,63 @@ void enc_dec_vigenere(string text, string password, string &code, char (*operati
         }
     }
 }
+
+/**
+ * Masks in the least significant 5 bits of an ASCII character numeric value.
+ * A number representing a letter between a and z (1-26 respectively) is returned.
+ * 01100100
+ * AND
+ * 00011111 
+ */
+int value(char c){
+    return c & 31;
+}
+
+/**
+ * Takes an index of a letter a to z (1-26) and completes the required most 
+ * significant bits of its ASCII representation, the respective char is returned.
+ */
+char symbol(int n){
+    return n | 96;
+}
+
+/**
+ * Calculates the character that is achieved by shifting backwards as used in
+ * the Vigenere decryption process. Shifting is cyclic.
+ */
+char shift_forward(int n_char,int shift_index) {
+    int result = n_char + shift_index;
+    if(result > MAX_CHAR_VAL){
+        result = result - MAX_CHAR_VAL;
+    }
+    return symbol(result);
+}
+
+/**
+ * Calculates the character that is achieved by shifting forward as used in
+ * the Vigenere encryption process. Shifting is cyclic.
+ */
+char shift_backwards(int n_char,int shift_index){
+    int result = n_char - shift_index;
+    if(result <= 0){
+        result = result + MAX_CHAR_VAL;
+    }
+    return symbol(result);
+}
+
+/**
+ * An interface to the encryption process, calls the generic function with the
+ * required operation
+ */
+void encrypt(string text, string password, string &code){
+    enc_dec_vigenere(text,password,code,shift_forward);
+}
+
+/**
+ * An interface to the decryption process, calls the generic function with the
+ * required operation
+ */
+void decrypt(string code, string password, string &text){
+    enc_dec_vigenere(code, password, text, shift_backwards);
+}
+
