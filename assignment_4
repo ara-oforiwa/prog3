@@ -1,0 +1,112 @@
+#include <iostream>
+//#include "vVector.h"
+
+using namespace std;
+
+/* develop a class vVector with following properties
+ * Private: vVector dimension, numerical values in dynaically allocated array
+ * Constructor with two optional parameters (vVector dimension, initialisation value)
+ * if parameter 1 is not specified, vVector size shall be 2
+ * if parameter 2 is ommitted, all values shall be initialised to 0
+ * setter and gettr methods
+*/
+
+
+class vVector {
+private:
+    //if vVector dimension is greater than the vVector max, them allocate new memory
+    int vectorDimension; // actual dimensions of the elements
+    int vectorMax; // size of the allocated memory
+
+    int* array;
+    void new_memory();
+
+public:
+    vVector ();
+    vVector (int); //this is for the Max size of the vVector
+    vVector (const vVector&); //copy constructor
+    ~vVector(); //deconstructor
+    void push_back(int i); //push elements to the back of the array
+    int dimension();
+    int operator [] (int); //what elements for I want to return --> array[i]
+    int at(int i);
+
+};
+
+int vVector :: dimension() {
+    return vectorDimension;
+}
+
+//Constructor
+vVector ::vVector() {
+    vectorMax = 20; // default size of the vVector
+    array = new int [vectorMax];
+    vectorDimension = 0;
+}
+
+
+//Constructor
+vVector ::vVector(int i) {
+    vectorMax = i;
+    array = new int [vectorMax];
+    vectorDimension = 0;
+}
+
+//Copy Constructor
+vVector ::vVector(const vVector& v) {
+    //implement later
+}
+
+//
+// Destructor
+vVector ::~vVector() {
+    delete[] array; // delete the allocated memory designated with the pointer
+}
+
+void vVector::push_back(int i) {
+    if (vectorDimension+1 > vectorMax) // check if allocated memory is sufficient
+        new_memory(); // new memory is allocated is previous is not sufficient
+    array[vectorDimension] = i;
+    vectorDimension++;
+}
+
+int vVector:: operator[] (int i) {
+    return array[i];
+}
+
+int vVector::at(int i) {
+    if (i < vectorDimension)
+        return array[i];
+    throw 2;
+}
+
+void vVector ::new_memory() {
+    vectorMax = vectorDimension *2;
+    int* tmp = new int[vectorMax];
+    for (int i = 0; i < vectorDimension; i ++)
+        tmp [i] = array [i];
+    delete[] array;
+    array = tmp;
+}
+
+
+int main() {
+
+    vVector myVector;
+    int tmp;
+    cout << " Please enter your vectors. Enter -1 to save and exit" << endl;
+    while (1) {
+        cin >> tmp;
+        if (tmp ==-1)
+            break;
+        myVector.push_back(tmp);
+    }
+
+    cout << "Size of vectors are "<< myVector.dimension() << endl;
+
+    for (int i = 0; i < myVector.dimension(); i++)
+        cout << myVector[i] << " ";
+    cout << endl;
+
+    return 0;
+}
